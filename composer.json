@@ -1,0 +1,35 @@
+{
+    "name": "paschaldev/eloquent-google-translate",
+    "description": "A library that automatically translates Laravel models with Google Translate API easily.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["eloquent", "google", "translate", "i18n", "laravel", "translatable", "paschaldev"],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ezeugwu Paschal",
+            "email": "ezeugwupaschal@yahoo.com"
+        }
+    ],
+    "require-dev": {
+        "laravel/laravel": "dev-develop"
+    },
+    "autoload": {
+        "psr-4": {
+            "PaschalDev\\EloquentGoogleTranslate\\": "src/"
+        }
+    },
+    "extra": {
+        "eloquent-google-translate": {
+            "providers": [
+                "PaschalDev\\EloquentGoogleTranslate\\Providers\\TranslateServiceProvider"
+            ],
+            "aliases": {
+                "EloquentGoogleTranslate": "PaschalDev\\EloquentGoogleTranslate\\Facades\\EloquentGoogleTranslate"
+            }
+        }
+    },
+    "require": {
+        "viniciusgava/google-translate-api": "dev-master"
+    }
+}

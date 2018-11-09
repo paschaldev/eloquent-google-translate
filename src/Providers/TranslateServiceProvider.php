@@ -1,12 +1,12 @@
 <?php
 
-namespace PaschalDev\EloquentGoogleTranslate\Providers;
+namespace PaschalDev\EloquentTranslate\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use PaschalDev\EloquentGoogleTranslate\EloquentGoogleTranslate;
+use PaschalDev\EloquentTranslate\EloquentTranslate;
 
-use PaschalDev\EloquentGoogleTranslate\TranslateModelObserver;
+use PaschalDev\EloquentTranslate\TranslateModelObserver;
 
 class TranslateServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,6 @@ class TranslateServiceProvider extends ServiceProvider
         $this->eloquentTranslateConfig();
         $this->eloquentTranslateMigrations();
         $this->eloquentTranslateHelpers();
-        $this->setupObservers();
     }
     /**
      * Register the application services.
@@ -31,7 +30,7 @@ class TranslateServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('eloquent-translate', function () {
-            return new EloquentGoogleTranslate;
+            return new EloquentTranslate;
         });
     }
     /**
@@ -42,7 +41,7 @@ class TranslateServiceProvider extends ServiceProvider
     protected function eloquentTranslatePublishes()
     {
         $this->publishes([
-            __DIR__ . '/../config/eloquent-google-translate.php' => config_path('eloquent-google-translate.php'),
+            __DIR__ . '/../config/eloquent-translate.php' => config_path('eloquent-translate.php'),
         ]);
     }
     /**
@@ -52,8 +51,8 @@ class TranslateServiceProvider extends ServiceProvider
      */
     protected function eloquentTranslateConfig()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/eloquent-google-translate.php',
-            'eloquent-google-translate');
+        $this->mergeConfigFrom(__DIR__ . '/../config/eloquent-translate.php',
+            'eloquent-translate');
     }
     
     /**
@@ -73,13 +72,5 @@ class TranslateServiceProvider extends ServiceProvider
     protected function eloquentTranslateHelpers()
     {
         require_once __DIR__ . '/../helpers.php';
-    }
-
-    protected function setupObservers()
-    {
-        foreach( config('eloquent-google-translate.models') as $model => $columns)
-        {
-            $model::observe( new TranslateModelObserver );
-        }
     }
 }

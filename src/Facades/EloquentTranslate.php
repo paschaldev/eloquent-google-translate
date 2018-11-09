@@ -1,10 +1,10 @@
 <?php 
 
-namespace PaschalDev\EloquentGoogleTranslate\Facades;
+namespace PaschalDev\EloquentTranslate\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class EloquentGoogleTranslate extends Facade
+class EloquentTranslate extends Facade
 {	
 	protected static function getFacadeAccessor()
 	{

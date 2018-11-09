@@ -1,9 +1,11 @@
 <?php 
 
-namespace PaschalDev\EloquentGoogleTranslate;
+namespace PaschalDev\EloquentTranslate;
 
 use Illuminate\Database\Eloquent\Model;
-use PaschalDev\EloquentGoogleTranslate\Models\Translation;
+use PaschalDev\EloquentTranslate\Jobs\TranslatorJob;
+use PaschalDev\EloquentTranslate\Services\Translator;
+use PaschalDev\EloquentTranslate\Models\Translation;
 
 class TranslateModelObserver
 {
@@ -39,14 +41,18 @@ class TranslateModelObserver
     }
 
     /**
-     * Handle the User "deleted" event.
+     * Delete translations for a model when the model is deleted
      *
      * @param  \App\User  $user
      * @return void
      */
     public function deleted(Model $model)
     {
-        //
+        $modelClass = get_class( $model );
+
+        Translation::where('model', $modelClass)
+            ->where('model_id', $model->id)
+            ->delete();
     }
 
     private function setColumns($columns)
@@ -58,12 +64,10 @@ class TranslateModelObserver
         $this->columns = $columns;
     }
 
-    private function translate(Model $model)
+    private function translate(Model $model, $force = false)
     {
         $this->model = $model;
         $this->setColumns( $model->translateColumns );
-
-        $modelClass = (new \ReflectionClass($model))->getName();
 
         foreach( $this->columns as $column ){
 
@@ -71,18 +75,21 @@ class TranslateModelObserver
 
             if( $value )
             {
-                // Fetch and store model translations from Google Translate
-                Translation::updateOrCreate(
-                    [
-                        'model' => $modelClass,
-                        'model_id' => $model->id,
-                        'column' => $column,
-                        'locale' => 'fr',
-                    ],
-                    [
-                        'translation' => 'Soulignez le mot convenable'
-                    ]
-                );
+                // Fetch and store model translations from  Translate
+                foreach( config('eloquent-translate.locales') as $locale )
+                {
+                    // Check if queue was enabled and process with queue 
+                    if( config('eloquent-translate.queue') === true){
+
+                        // Disatch the job 
+                        dispatch( new TranslatorJob( $model, $column, $locale ) );
+                    }
+                    else {
+
+                        // Run without queue 
+                        ( new Translator( $model, $column, $locale ) )->saveTranslation();
+                    }
+                }
             }
         }
     }

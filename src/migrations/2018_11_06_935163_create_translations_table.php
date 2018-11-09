@@ -3,13 +3,13 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-// use EloquentGoogleTranslate;
+// use EloquentTranslate;
 
 class CreateTranslationsTable extends Migration {
 
     public function up()
     {
-        Schema::create( EloquentGoogleTranslate::getTranslationsTableName() , function(Blueprint $table) {
+        Schema::create( config('eloquent-translate.database_table') , function(Blueprint $table) {
 
             $table->increments('id')->unsigned();
             $table->bigInteger('model_id')->unsigned();
@@ -25,6 +25,6 @@ class CreateTranslationsTable extends Migration {
 
     public function down()
     {
-        Schema::drop( EloquentGoogleTranslate::getTranslationsTableName() );
+        Schema::drop( config('eloquent-translate.database_table') );
     }
 }

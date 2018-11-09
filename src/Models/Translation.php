@@ -1,6 +1,6 @@
 <?php 
 
-namespace PaschalDev\EloquentGoogleTranslate\Models;
+namespace PaschalDev\EloquentTranslate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +18,6 @@ class Translation extends Model
 
     public function getTable()
     {
-        return config('eloquent-google-translate.database_table');
+        return config('eloquent-translate.database_table');
     }
 }

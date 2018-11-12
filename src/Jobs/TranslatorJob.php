@@ -17,6 +17,8 @@ class TranslatorJob implements ShouldQueue
     public $column;
     public $locale;
 
+    public $queue;
+
     /**
      * Create a new job instance.
      *
@@ -27,6 +29,8 @@ class TranslatorJob implements ShouldQueue
         $this->model = $model;
         $this->column = $column;
         $this->locale = $locale;
+
+        $this->queue = config('eloquent-translate.queue_name');
     }
  
     /**

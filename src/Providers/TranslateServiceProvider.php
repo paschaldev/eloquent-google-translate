@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use PaschalDev\EloquentTranslate\EloquentTranslate;
 
 use PaschalDev\EloquentTranslate\TranslateModelObserver;
+use PaschalDev\EloquentTranslate\Commands\TranslateCommand;
+use PaschalDev\EloquentTranslate\Commands\DeleteTranslationCommand;
 
 class TranslateServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class TranslateServiceProvider extends ServiceProvider
         $this->eloquentTranslateConfig();
         $this->eloquentTranslateMigrations();
         $this->eloquentTranslateHelpers();
+        $this->bootCommands();
     }
     /**
      * Register the application services.
@@ -29,13 +32,13 @@ class TranslateServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // What we are trying to achieve here with this binding is to autodetect the locale sent from 
+        // the browser by checking if its present in the cookie or checking a specific locale.
         $this->app->bind('eloquent-translate', function () {
 
-            $request = app(\Illuminate\Http\Request::class);
+            $headers = getallheaders();
 
-            dd( $_COOKIE );
-
-            return new EloquentTranslate( $request->cookie('locale') );
+            return new EloquentTranslate( $_COOKIE['locale'] ?? $headers['Translate-Locale'] ?? null );
         });
     }
     /**
@@ -77,5 +80,16 @@ class TranslateServiceProvider extends ServiceProvider
     protected function eloquentTranslateHelpers()
     {
         require_once __DIR__ . '/../helpers.php';
+    }
+
+    protected function bootCommands()
+    {
+        if ($this->app->runningInConsole()) {
+
+            $this->commands([
+                TranslateCommand::class,
+                DeleteTranslationCommand::class,
+            ]);
+        }
     }
 }

@@ -3,8 +3,6 @@
 namespace PaschalDev\EloquentTranslate;
 
 use Illuminate\Database\Eloquent\Model;
-use PaschalDev\EloquentTranslate\Jobs\TranslatorJob;
-use PaschalDev\EloquentTranslate\Services\Translator;
 use PaschalDev\EloquentTranslate\Models\Translation;
 
 class TranslateModelObserver
@@ -22,7 +20,7 @@ class TranslateModelObserver
      */
     public function created(Model $model)
     {
-        $this->translate( $model );
+        $model->translate(true);
 
         return $model;
     }
@@ -35,7 +33,7 @@ class TranslateModelObserver
      */
     public function updated(Model $model)
     {
-        $this->translate( $model );
+        $model->translate(true);
 
         return $model;
     }
@@ -53,44 +51,5 @@ class TranslateModelObserver
         Translation::where('model', $modelClass)
             ->where('model_id', $model->id)
             ->delete();
-    }
-
-    private function setColumns($columns)
-    {
-        if( ! is_array($columns) ){
-            return;
-        }
-
-        $this->columns = $columns;
-    }
-
-    private function translate(Model $model, $force = false)
-    {
-        $this->model = $model;
-        $this->setColumns( $model->translateColumns );
-
-        foreach( $this->columns as $column ){
-
-            $value = $model->{$column};
-
-            if( $value )
-            {
-                // Fetch and store model translations from  Translate
-                foreach( config('eloquent-translate.locales') as $locale )
-                {
-                    // Check if queue was enabled and process with queue 
-                    if( config('eloquent-translate.queue') === true){
-
-                        // Disatch the job 
-                        dispatch( new TranslatorJob( $model, $column, $locale ) );
-                    }
-                    else {
-
-                        // Run without queue 
-                        ( new Translator( $model, $column, $locale ) )->saveTranslation();
-                    }
-                }
-            }
-        }
     }
 }

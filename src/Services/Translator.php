@@ -3,10 +3,11 @@
 namespace PaschalDev\EloquentTranslate\Services;
 
 use PaschalDev\EloquentTranslate\Models\Translation;
+use Illuminate\Database\Eloquent\Model;
 
 class Translator {
 
-    public function __construct($model, $column, $locale)
+    public function __construct(Model $model, $column, $locale)
     {
         $this->model = $model;
         $this->column = $column;

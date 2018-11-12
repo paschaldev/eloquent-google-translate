@@ -2,6 +2,8 @@
 
 namespace PaschalDev\EloquentTranslate;
 
+use Illuminate\Database\Eloquent\Model;
+
 class EloquentTranslate {
 
     private $locale;

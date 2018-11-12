@@ -44,6 +44,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Queue Name
+    |--------------------------------------------------------------------------
+    |
+    | The name of the queue where translations should be stored. Setting this 
+    | value to null will use the `default` laravel queue
+    |
+    | @var String|null
+    */
+    'queue_name' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Translation Locales
     |--------------------------------------------------------------------------
     |
@@ -78,4 +90,16 @@ return [
     | @var String
     */
     'fallback_locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Automatically translate 
+    |--------------------------------------------------------------------------
+    |
+    | Attempt to translate locales automatically from the locale set in the user 
+    | browser
+    |
+    | @var Boolean
+    */
+    'auto_translate' => true
 ];

@@ -17,10 +17,13 @@
     "autoload": {
         "psr-4": {
             "PaschalDev\\EloquentTranslate\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
-        "eloquent-translate": {
+        "laravel": {
             "providers": [
                 "PaschalDev\\EloquentTranslate\\Providers\\TranslateServiceProvider"
             ],

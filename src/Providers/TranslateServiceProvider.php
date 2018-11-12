@@ -30,7 +30,12 @@ class TranslateServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('eloquent-translate', function () {
-            return new EloquentTranslate;
+
+            $request = app(\Illuminate\Http\Request::class);
+
+            dd( $_COOKIE );
+
+            return new EloquentTranslate( $request->cookie('locale') );
         });
     }
     /**

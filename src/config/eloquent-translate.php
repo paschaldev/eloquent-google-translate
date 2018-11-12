@@ -63,5 +63,19 @@ return [
         'yo',
         'ha',
         'ig'
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fallback Locale
+    |--------------------------------------------------------------------------
+    |
+    | Default Locale to use if none is set. 
+    |
+    | If it is set to a value not in your locales array, the translation will 
+    | default to the original value set in your model.
+    |
+    | @var String
+    */
+    'fallback_locale' => 'en',
 ];

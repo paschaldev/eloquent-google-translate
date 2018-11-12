@@ -4,11 +4,11 @@ namespace PaschalDev\EloquentTranslate;
 
 class EloquentTranslate {
 
-    private $translatorService;
+    private $locale;
 
-    public function __construct(GoogleTranslate $translatorService)
+    public function __construct( $locale = null )
     {
-        $this->translatorService = $translatorService;
+        $this->locale = $locale;
     }
 
     /**
@@ -21,5 +21,8 @@ class EloquentTranslate {
         return config('eloquent-translate.database_table');
     }
 
-    
+    public function getLocale()
+    {
+        return $this->locale ?? config('eloquent-translate.fallback_locale');
+    }
 }

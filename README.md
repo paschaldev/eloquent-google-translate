@@ -9,24 +9,24 @@ composer install paschaldev/eloquent-translate
 
 The package will automatically register itslef for supported laravel versions, if not, you should ad this to your providers array in `config/app.php`
 
-```
+```php
 PaschalDev\EloquentTranslate\Providers\TranslateServiceProvider::class,
 ```
 
 Then after that you can publish 
 
-```
+```php
 php artisan vendor:publish --provider="PaschalDev\EloquentTranslate\Providers\TranslateServiceProvider"
 ```
 This will copy the configuration to your config path.
 
 For Lumen, open your `bootstrap/app.php` and add this line to regitser a provider 
-```
+```php
 $app->register(PaschalDev\EloquentTranslate\Providers\TranslateServiceProvider::class);
 ```
 
 And this line to setup configuration 
-```
+```php
 $app->configure('eloquent-translate');
 ```
 
@@ -36,7 +36,7 @@ Then run `php artisan migrate` to create the translations table. The default tab
 
 In order to make a model translatable, you need to include the trait in your model and also set the `translateAttributes` property. This properties are the attributes you wish to translate in that particukar DB column.
 
-```
+```php
 <?php
 
 namespace App;
@@ -63,7 +63,7 @@ If you don't have a package that uses the `getAttribute` property, you can skip 
 
 In order to resolve this, you need to make use of the `insteadof` keyword in your traits. For my own scenario, I had this library `Metable` that already uses the `getAttribute` method so here is how to resolve this issue.
 
-```
+```php
 <?php
 
 namespace App;
@@ -93,7 +93,7 @@ As you can see, using the `insteadof`, we can tell the model to use this library
 
 Lastly, you need to add this method in your model and make sure it calls the other library's `getAttribute` overriden name you defined using `as` above. In our case, `getAttributeOverride`. We need this because this package will first call this method before running it's own. That way we have deferred this package ro run `getAttribute` last so it doesn't affect your app.
 
-```
+```php
 public function getAttributeOverrider($key)
 {
     return $this->getAttributeOverride($key);
@@ -121,7 +121,7 @@ Define your locales in the configuration file and when the package will translat
 
 If you prefer not to use automatic translation, you can manually set translations individually for your models. There are two methods available.
 
-```
+```php
 public function setTranslation($attribute, $locale, $translation, $force = false)
 ```
 
@@ -129,19 +129,19 @@ The attribute name, make sure it is defined in your `$translateAttributes` array
 
 The `$force` argument if set to true will make you add `attribute` even if the attributes are not defined in your model file.
 
-```
+```php
 $model->setTranslation('name', 'fr', 'Bonjour')
 ```
 
 You can also set all your translations for a model in multiple locales at a go.
 
-```
+```php
 public function setTranslations($attribute, $translations)
 ```
 
 Use it like this. 
 
-```
+```php
 $model = App\Post::find(1);
 
 $translations = [

@@ -1,6 +1,6 @@
 {
     "name": "paschaldev/eloquent-translate",
-    "description": "A library that automatically translates Laravel models with  Translate API easily.",
+    "description": "A package for translating Laravel models with ease.",
     "type": "library",
     "license": "MIT",
     "keywords": ["eloquent", "google", "translate", "i18n", "laravel", "translatable", "paschaldev"],

@@ -57,7 +57,7 @@ class Post extends Model
 Once you have this done on your model, any update or create action on your model will automatically create your translations if you have the `auto_translate` set to `true` in your configuration.
 
 #### Resolving trait collisions 
-This package uses the `getAttribute` method in your model, you might already be using that or a library you have is using that and you start getting errors during translations because multiple packages are trying to set the same methods on a model. 
+This package uses the `getAttribute` method in your model, you might already be using that or a library you have is using that. You'll start getting errors during translations because multiple packages are trying to set the same methods on a model. 
 
 If you don't have a package that uses the `getAttribute` property, you can skip this section.
 
@@ -89,7 +89,7 @@ class Category extends Model{
 }
 ```
 
-As you can see, using the `insteadof`, we can tell the model to use this library's `getAttribute` methos instead of `Metable` and then we use the `as` keyword to 'rename' the `getAttribute` on `Metable` to `getAttributeOverride` so that we can still have access to it.
+As you can see, using the `insteadof`, we can tell the model to use this library's `getAttribute` method instead of `Metable` and then we use the `as` keyword to 'rename' the `getAttribute` on `Metable` to `getAttributeOverride` so that we can still have access to it.
 
 Lastly, you need to add this method in your model and make sure it calls the other library's `getAttribute` overriden name you defined using `as` above. In our case, `getAttributeOverride`. We need this because this package will first call this method before running it's own. That way we have deferred this package ro run `getAttribute` last so it doesn't affect your app.
 
@@ -154,7 +154,7 @@ $translations = [
 $model->setTranslations('name', $translations);
 ```
 
-In the code above, we are setting translations for the `name` attribute on the model assuming the value is `Goof Morning` to 3 locales at once: French, Igbo, Yoruba.
+In the code above, we are setting translations for the `name` attribute on the model assuming the value is `Good Morning` to 3 locales at once: French, Igbo, Yoruba.
 
 ### Fetching Translation 
 

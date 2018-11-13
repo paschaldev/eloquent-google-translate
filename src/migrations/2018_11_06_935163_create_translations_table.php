@@ -13,13 +13,13 @@ class CreateTranslationsTable extends Migration {
 
             $table->increments('id')->unsigned();
             $table->bigInteger('model_id')->unsigned();
-            $table->string('column');
+            $table->string('attribute');
             $table->string('model');
             $table->string('locale', 10);
             $table->longText('translation');
             $table->timestamps();
 
-            $table->unique(['model', 'model_id', 'locale', 'column']);
+            $table->unique(['model', 'model_id', 'locale', 'attribute']);
         });
     }
 

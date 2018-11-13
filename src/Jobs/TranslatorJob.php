@@ -14,7 +14,7 @@ class TranslatorJob implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     public $model;
-    public $column;
+    public $attribute;
     public $locale;
 
     public $queue;
@@ -24,10 +24,10 @@ class TranslatorJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($model, $column, $locale)
+    public function __construct($model, $attribute, $locale)
     {
         $this->model = $model;
-        $this->column = $column;
+        $this->attribute = $attribute;
         $this->locale = $locale;
 
         $this->queue = config('eloquent-translate.queue_name');
@@ -40,6 +40,6 @@ class TranslatorJob implements ShouldQueue
      */
     public function handle()
     {
-        ( new Translator( $this->model, $this->column, $this->locale ) )->saveTranslation();
+        ( new Translator( $this->model, $this->attribute, $this->locale ) )->saveTranslation();
     }
 }

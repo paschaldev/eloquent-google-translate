@@ -12,7 +12,7 @@ class Translation extends Model
         'model_id',
         'model',
         'locale',
-        'column',
+        'attribute',
         'translation'
     ];
 

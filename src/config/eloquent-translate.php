@@ -2,6 +2,8 @@
 
 return [
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | Database Table name
@@ -32,15 +34,16 @@ return [
     | Queue Translations
     |--------------------------------------------------------------------------
     |
-    | This library uses Google API to translate your columns. It is very 
-    | important this valus is set to true so it doesn't slow down your app. 
+    | This library uses a 3rd party to automatically translate your attributes 
+    | if `auto_translate` is enabled. It is very important this value is set 
+    | to true so it doesn't slow down your app. 
     |
     | It uses Laravel's internal queue system so be sure you understand how 
     | queue works in Laravel and you have already setup your queue.
-    |
+    |   
     | @required Boolean
     */
-    'queue' => false,
+    'queue' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -52,14 +55,14 @@ return [
     |
     | @var String|null
     */
-    'queue_name' => null,
+    'queue_name' => 'translation',
 
     /*
     |--------------------------------------------------------------------------
     | Translation Locales
     |--------------------------------------------------------------------------
     |
-    | A list of locales to translate to.
+    | A list of locales to automatically translate to.
     |
     | Check here for valid values https://cloud.google.com/translate/docs/languages
     |
@@ -93,11 +96,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Automatically translate 
+    | Automatically detect locale 
     |--------------------------------------------------------------------------
     |
-    | Attempt to translate locales automatically from the locale set in the user 
-    | browser
+    | Set this to true to automatically detect the user's locale and return the 
+    | translation value of the attributes.
+    |
+    | This checks for a "locale" from the cookie of the user's browser or a 
+    | Translate-Locale HTTP header value. (Usefull if you're using an API).
+    |
+    | @var Boolean
+    */
+    'detect_locale' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Automatically translate model
+    |--------------------------------------------------------------------------
+    |
+    | A model observer is already set to hook to the create and update event.
+    |
+    | Automatic translation is done over the internet through a provider, the
+    | default for now is Google Translate api. If you set this value to false, 
+    | you'll have to manually create translations for your model.
+    |
+    | Check the documentation for `setTranslation(s)` methods
     |
     | @var Boolean
     */

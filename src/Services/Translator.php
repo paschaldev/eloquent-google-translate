@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Translator {
 
-    public function __construct(Model $model, $column, $locale)
+    public function __construct(Model $model, $attribute, $locale)
     {
         $this->model = $model;
-        $this->column = $column;
+        $this->attribute = $attribute;
         $this->locale = $locale;
     }
 
@@ -20,11 +20,11 @@ class Translator {
             [
                 'model' => get_class( $this->model ),
                 'model_id' => $this->model->id,
-                'column' => $this->column,
+                'attribute' => $this->attribute,
                 'locale' => $this->locale,
             ],
             [
-                'translation' => $this->getTranslation( $this->model->{$this->column}, $this->locale )
+                'translation' => $this->getTranslation( $this->model->{$this->attribute}, $this->locale )
             ]
         );
     }

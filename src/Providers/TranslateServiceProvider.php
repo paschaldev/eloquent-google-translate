@@ -50,7 +50,7 @@ class TranslateServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/eloquent-translate.php' => config_path('eloquent-translate.php'),
-        ]);
+        ], 'config');
     }
     /**
      * Marge the package's configuration.

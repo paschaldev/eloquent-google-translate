@@ -14,7 +14,7 @@ class TranslateCommand extends BaseCommand {
      *
      * @var string
      */
-    protected $signature = 'eloquent-translate:translate {--model=} {--F|force}';
+    protected $signature = 'eloquent-translate:translate {--M|model=} {--F|force}';
 
     /**
      * The console command description.
@@ -30,7 +30,7 @@ class TranslateCommand extends BaseCommand {
      */
     public function handle()
     {
-        $model = $this->option('model');
+        $model = $modelRaw = $this->option('model');
         $force = $this->option('force');
 
         $this->setModel($model);
@@ -41,19 +41,50 @@ class TranslateCommand extends BaseCommand {
         // Check if model uses translation trait 
         $this->modelUsesTrait();
 
-        // Fetch columns
-        $columns = $model->translateColumns;
+        // Fetch attribtes
+        $attributes = $model->getTranslationAttributes();
 
-        // Check if columns are defined 
-        if( ! $columns || ! is_array( $columns ) )
+        // Check if attribtes are defined 
+        if( ! $attributes || empty( $attributes ) )
         {
-            return $this->error("Translate columns not specified on model class. It should be an array of columns to translate");
+            return $this->error("Translateable attributes not specified on model class. It should be an array of attributes / columns to translate");
         }
-        
-        //Translate all models
-        $model->all()->each(function($model, $key){
 
-            $model->translate();
+
+        //Check if a base query is defined on the model. 
+        // Use that instead of quering all the models in the table.
+        $queryScope = 'scopeBulkTranslationsQuery';
+
+        if( method_exists( $model, $queryScope ) )
+        {   
+            // Fetch the query from the model
+            $query =  $model->{'bulkTranslationsQuery'}()->get();
+
+            $bar = $this->output->createProgressBar(count($query));
+            $bar->start();
+
+            $query->each(function($model, $key) use($force, $bar){
+
+                $model->translate($force);
+                $bar->advance();
+            });
+
+            $bar->finish();
+            exit(1);
+        }
+
+        //Translate all models if no query scope is defined in the model
+        $model = $model->all();
+
+        $bar = $this->output->createProgressBar(count($model));
+        $bar->start();
+        
+        $model->each(function($model, $key) use($force, $bar){
+
+            $model->translate($force);
+            $bar->advance();
         });
+        
+        $bar->finish();
     }
 }

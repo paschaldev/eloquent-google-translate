@@ -7,11 +7,6 @@ use PaschalDev\EloquentTranslate\Models\Translation;
 
 class TranslateModelObserver
 {
-
-    private $columns = [];
-
-    private $model;
-
     /**
      * Handle the User "created" event.
      *
@@ -20,7 +15,8 @@ class TranslateModelObserver
      */
     public function created(Model $model)
     {
-        $model->translate(true);
+        if( config('eloquent-translate.auto_translate') === true)
+            $model->translate(true);
 
         return $model;
     }
@@ -32,8 +28,9 @@ class TranslateModelObserver
      * @return void
      */
     public function updated(Model $model)
-    {
-        $model->translate(true);
+    {   
+        if( config('eloquent-translate.auto_translate') === true)
+            $model->translate(true);
 
         return $model;
     }

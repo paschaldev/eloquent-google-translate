@@ -2,6 +2,8 @@
 
 namespace PaschalDev\EloquentTranslate\Commands;
 
+use PaschalDev\EloquentTranslate\Models\Translation;
+
 class DeleteTranslationCommand extends BaseCommand {
 
     /**
@@ -9,7 +11,7 @@ class DeleteTranslationCommand extends BaseCommand {
      *
      * @var string
      */
-    protected $signature = 'eloquent-translate:clear {--model=} {--L|locale?}';
+    protected $signature = 'eloquent-translate:clear {--M|model=} {--I|id=} {--L|locale=} {--A|attribute=}';
 
     /**
      * The console command description.
@@ -27,20 +29,46 @@ class DeleteTranslationCommand extends BaseCommand {
     {
         $model = $this->option('model');
         $locale = $this->option('locale');
+        $modelID = $this->option('id');
+        $attribute = $this->option('attribute');
 
-        $this->setModel($model);
+        if ($this->confirm('Are you sure you want to perform this operation?')) {
+            
+            $translations = Translation::query();
 
-        // Check if model exists 
-        $model = $this->getModelInstance();
+            if( $model )
+            {
+                try {
 
-        $model->all()->each(function($model, $key) use($locale){
+                    $model = new $model;
+                }
+                catch( \Exception $e )
+                {
+                    return $this->error("Could not find model class.");
+                }
+
+                $translations->where('model', get_class($model) );
+            }
 
             if( $locale ){
 
-                return $model->translations()->where('locale', $locale)->delete();
+                $locale = explode(',', $locale);
+                $translations->whereIn('locale', $locale);
             }
 
-            return $model->translations()->delete();
-        });
+            if( $modelID )
+            {
+                $ids = explode(',', $modelID);
+                $translations->whereIn('model_id', $ids);
+            }
+
+            if( $attribute )
+            {
+                $attribute = explode(',', $attribute);
+                $translations->whereIn('attribute', $attribute);
+            }
+
+            return $translations->delete();
+        }
     }
 }

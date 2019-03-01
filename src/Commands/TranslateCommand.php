@@ -66,10 +66,7 @@ class TranslateCommand extends BaseCommand {
                 return $this->runRequest( $query, $force );
             }
         }
-        catch(\Exception $e) {
-
-            return null;
-        }
+        catch(\Exception $e) {}
 
         //Translate all models if no query scope is defined in the model
         $model = $model->all();

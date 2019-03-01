@@ -55,36 +55,40 @@ class TranslateCommand extends BaseCommand {
         // Use that instead of quering all the models in the table.
         $queryScope = 'scopeBulkTranslationsQuery';
 
-        if( method_exists( $model, $queryScope ) )
-        {   
-            // Fetch the query from the model
-            $query =  $model->{'bulkTranslationsQuery'}()->get();
+        try {
 
-            $bar = $this->output->createProgressBar(count($query));
-            $bar->start();
+            $methodExists = ( new \ReflectionMethod($model, $queryScope) )->isStatic();
 
-            $query->each(function($model, $key) use($force, $bar){
+            if( $methodExists )
+            {
+                // Fetch the query from the model
+                $query = $model::{'bulkTranslationsQuery'}()->get();
+                return $this->runRequest( $query, $force );
+            }
+        }
+        catch(\Exception $e) {
 
-                $model->translate($force);
-                $bar->advance();
-            });
-
-            $bar->finish();
-            exit(1);
+            return null;
         }
 
         //Translate all models if no query scope is defined in the model
         $model = $model->all();
+        return $this->runRequest( $model );
+    }
 
+    private function runRequest($model, $force = false) {
+
+        $this->line("\n");
         $bar = $this->output->createProgressBar(count($model));
         $bar->start();
         
         $model->each(function($model, $key) use($force, $bar){
 
-            $model->translate($force);
+            $model->translate($force, $force);
             $bar->advance();
         });
         
         $bar->finish();
+        $this->line("\n");
     }
 }

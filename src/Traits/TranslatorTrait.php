@@ -28,22 +28,15 @@ trait TranslatorTrait {
         $modelClass::observe( new TranslateModelObserver );
     }
 
-    public function getAttribute($key)
+    public function getAttribute($key, $attr = null)
     {
-        $attr = parent::getAttribute($key);
+        $attr = $attr ?? parent::getAttribute($key);
 
         // Model field we are trying to access is not in the array of 
         // attributes to translate so we skip.
         if( ! in_array( $key, $this->getTranslationAttributes() ) )
             return $attr;
         
-        // Check if and attribute overrider method is defined in the model. 
-        // This is useful for resolving trait collisions.
-        if( method_exists( $this, 'getAttributeOverrider' ) )
-        {
-            $attr = $this->getAttributeOverrider($key);
-        }
-
         try{
             $translationModel = Translation::whereModel( $this->getTranslationModelClassName() )
                 ->whereModelId( $this->id )
@@ -63,6 +56,11 @@ trait TranslatorTrait {
         $model = $this;
 
         foreach( $model->getTranslationAttributes() as $attribute ){
+
+            if( $this->attributesToIgnoreAttribute( $model, $attribute ) ) {
+
+                continue;
+            }
 
             $value = $model->{$attribute};
 
@@ -103,6 +101,32 @@ trait TranslatorTrait {
         }
 
         return true;
+    }
+
+    public function attributesToIgnoreAttribute( $model, $attr ) {
+
+        if( method_exists( $this, 'ignoreAttributes' ) ) {
+
+            $ignoreAttributes = $this->ignoreAttributes();
+
+            if( ! array_key_exists( $attr, $ignoreAttributes ) ) {
+
+                return false;
+            }
+
+            try {
+
+                $attributeData = $ignoreAttributes[ $attr ];
+
+                if( $model->{ $attributeData['column'] } == $attributeData['value'] ) {
+
+                    return true;
+                }
+            }
+            catch(\Exception $e){}
+        }
+
+        return false;
     }
     
     /**
@@ -222,7 +246,7 @@ trait TranslatorTrait {
      */
     public function getTranslationAttributes()
     {
-        return is_array( $this->translateAttributes )
+        return property_exists($this, 'translateAttributes') && is_array( $this->translateAttributes )
             ? $this->translateAttributes
             : [];
     }

@@ -7,7 +7,7 @@ You can install easily via composer.
 composer install paschaldev/eloquent-translate
 ```
 
-The package will automatically register itslef for supported laravel versions, if not, you should ad this to your providers array in `config/app.php`
+The package will automatically register itself for supported laravel versions, if not, you should add this to your providers array in `config/app.php`
 
 ```php
 PaschalDev\EloquentTranslate\Providers\TranslateServiceProvider::class,
@@ -20,7 +20,7 @@ php artisan vendor:publish --provider="PaschalDev\EloquentTranslate\Providers\Tr
 ```
 This will copy the configuration to your config path.
 
-For Lumen, open your `bootstrap/app.php` and add this line to regitser a provider 
+For Lumen, open your `bootstrap/app.php` and add this line to register a provider 
 ```php
 $app->register(PaschalDev\EloquentTranslate\Providers\TranslateServiceProvider::class);
 ```
@@ -61,7 +61,7 @@ This package uses the `getAttribute` method in your model, you might already be 
 
 If you don't have a package that uses the `getAttribute` property, you can skip this section.
 
-In order to resolve this, you need to make use of the `insteadof` keyword in your traits. For my own scenario, I had this library `Metable` that already uses the `getAttribute` method so here is how to resolve this issue.
+In order to resolve this, you need to make use of the `as` keyword in your traits. For my own scenario, I had this library `Metable` that already uses the `getAttribute` method so here is how to resolve this issue.
 
 ```php
 <?php
@@ -77,30 +77,28 @@ class Category extends Model{
 
     use Metable, TranslatorTrait {
 
-        TranslatorTrait::getAttribute insteadof Metable;
-        Metable::getAttribute as getAttributeOverride;
+        Metable::getAttribute as getMetableAttribute;
+        TranslatorTrait::getAttribute as getTranslationAttribute;
     }
 
-    public $translateColumns = [
+    public $translateAttributes = [
 
         'name',
         'caption'
     ];
+
+    public function getAttribute($key) {
+
+        $attr = $this->getMetableAttribute($key); //Fetch other library's attribute
+
+        $attr = $this->getTranslationAttribute( $key , $attr ); //Call our translation method and pass the last attribute resolved in the second parameter
+
+        return $attr;
+    }
 }
 ```
 
-As you can see, using the `insteadof`, we can tell the model to use this library's `getAttribute` method instead of `Metable` and then we use the `as` keyword to 'rename' the `getAttribute` on `Metable` to `getAttributeOverride` so that we can still have access to it.
-
-Lastly, you need to add this method in your model and make sure it calls the other library's `getAttribute` overriden name you defined using `as` above. In our case, `getAttributeOverride`. We need this because this package will first call this method before running it's own. That way we have deferred this package ro run `getAttribute` last so it doesn't affect your app.
-
-```php
-public function getAttributeOverrider($key)
-{
-    return $this->getAttributeOverride($key);
-}
-```
-
-After that, you're good to go. 
+As you can see, using the `as`, we can alias the `getAttribute` method of each individual package so that we can still have access to it. Lastly, you need to define a `getAttribute` method in your model if one does not exist and call the translation's method last and pass `$attr` as the second parameter. The `$attr` stands for the final resolved attribute from all library's after collusion. After that, you're good to go. 
 
 
 ## Usage 

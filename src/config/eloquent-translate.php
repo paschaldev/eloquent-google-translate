@@ -43,7 +43,7 @@ return [
     |   
     | @required Boolean
     */
-    'queue' => true,
+    'queue' => env('ELOQUENT_TRANSLATE_QUEUE', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     |
     | @var String|null
     */
-    'queue_name' => 'translation',
+    'queue_name' => env( 'ELOQUENT_TRANSLATE_QUEUE_NAME', 'translation'),
 
     /*
     |--------------------------------------------------------------------------
@@ -92,7 +92,7 @@ return [
     |
     | @var String
     */
-    'fallback_locale' => 'en',
+    'fallback_locale' => env( 'ELOQUENT_TRANSLATE_FALLBACK_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -107,7 +107,7 @@ return [
     |
     | @var Boolean
     */
-    'detect_locale' => true,
+    'detect_locale' => env( 'ELOQUENT_TRANSLATE_DETECT_LOCALE', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -124,5 +124,5 @@ return [
     |
     | @var Boolean
     */
-    'auto_translate' => true
+    'auto_translate' => env( 'ELOQUENT_TRANSLATE_AUTO', true)
 ];
